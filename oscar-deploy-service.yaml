@@ -1,0 +1,14 @@
+# Need apply oscar-deploy first
+apiVersion: v1
+kind: Service
+metadata:
+  name: oscar-deploy-service
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    nodePort: 30390
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: oscar-deploy

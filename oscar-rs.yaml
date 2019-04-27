@@ -1,0 +1,29 @@
+# Oscar Replica Set
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: oscar-rs
+  labels:
+    env:  dev
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env:  dev
+    matchExpressions:
+      - {key: env, operator: In, values: [dev]}
+      - {key: env, operator: NotIn, values: [prod]}  
+  template:
+    metadata:
+      labels:
+        app:  oscar-pod-v1
+        env:  dev
+        version:  v1
+    spec:
+      containers:
+        - name: oscar-pod
+          image: oscarwei168/oscar-docker
+          ports:
+            - containerPort: 3000
+  

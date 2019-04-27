@@ -1,0 +1,27 @@
+# Oscar Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oscar-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: oscar-deploy
+  template:
+    metadata:
+      labels: 
+        app:  oscar-deploy
+    spec:
+      containers:
+        - name: oscar-pod
+          image: oscarwei168/oscar-docker
+          ports:
+          - containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi" # 64M memory
+              cpu:  "250m" # 0.25 cpu core
+            limits:
+              memory: "128Mi" # 128M memory
+              cpu:  "1000m" # 1 cpu core  

@@ -1,0 +1,20 @@
+# Oscar Replication Controller
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: oscar-replication-controller
+spec:
+  replicas: 3
+  selector:
+    app:  oscar-pod-v1
+  template:
+    metadata:
+      labels:
+        app:  oscar-pod-v1
+    spec:
+      containers:
+        - name: oscar-pod
+          image: oscarwei168/oscar-docker
+          ports:
+            - containerPort: 3000
+  
