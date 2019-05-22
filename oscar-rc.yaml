@@ -5,7 +5,7 @@ metadata:
   name: oscar-replication-controller
 spec:
   replicas: 3
-  selector:
+  selector: # the labels for the Pods that this Replication Controller should monitor
     app:  oscar-pod-v1
   template:
     metadata:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: oscar-pod
-          image: oscarwei168/oscar-docker
+          image: oscarwei168/nginx-oscar:alpine
           ports:
-            - containerPort: 3000
+            - containerPort: 80
   

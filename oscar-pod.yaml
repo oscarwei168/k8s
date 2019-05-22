@@ -5,18 +5,39 @@ metadata:
   name: oscar-pod
   labels:
     app:  webserver
+  annotations:
+    tag:  v0.0.1  
+    author: Oscar Wei
+    author_email: oscarwei168@msn.com
+    release_date: 2019/05/10
 spec:
+  restartPolicy: OnFailure
   volumes:
     - name: "oscar-volume"
       hostPath:
-        path: "/Users/oscarwei168/Documents/Oscar/Projects/k8s/pods/volumes"
+        path: "/Users/oscarwei168/Documents/Oscar/Projects/k8s/volumes"
+    - name: secret-volume # volume for host machine
+      secret:
+        secretName: oscar-secret    
+  # nodeSelector:
+  #   env: qa      
   containers:
-    - name: oscar-pod
-      image: oscarwei168/oscar-docker
+    - name: nginx-oscar
+      image: oscarwei168/nginx-oscar:alpine
+      imagePullPolicy: IfNotPresent # by default, can change to 'Always/Never' for imagePullSecrets
       ports:
-        - containerPort: 3000
+        - containerPort: 80 # for container port
           name: http
-          protocol: TCP
+          protocol: TCP # TCP by default or otherwire UDP
+          # hostIP: 0.0.0.0
+          # hostPort: 80 # for host port
+      # command:
+      #   - echo
+      #   - "Hello World"
+      volumeMounts:
+        - name: secret-volume # volume for container
+          mountPath: /etc/creds
+          readOnly: true    
       resources:
         requests:
           memory: "64Mi" # 64M memory
@@ -27,7 +48,7 @@ spec:
       livenessProbe:
         httpGet:
           path: /
-          port: 3000
+          port: 80
         initialDelaySeconds: 5
         timeoutSeconds: 1
         periodSeconds: 10
@@ -35,8 +56,36 @@ spec:
       readinessProbe:
         httpGet:
           path: /
-          port: 3000
+          port: 80
         initialDelaySeconds: 5
         timeoutSeconds: 10
         periodSeconds: 10
         failureThreshold: 3
+      env:
+      - name: SECRET_NAME
+        valueFrom:
+          secretKeyRef:
+            name: oscar-secret
+            key: username
+      - name: SECRET_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: oscar-secret
+            key: password
+      - name: OSCAR_DEPLOYMENT_SERVICE
+        value: oscar-deployment-service # use kube-dns to bind service  
+      - name: MY_POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: MY_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: MY_POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP              
+  # imagePullSecrets:
+  #   - oscar-registry-key          
+

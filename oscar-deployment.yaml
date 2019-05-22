@@ -1,0 +1,40 @@
+# Oscar Deployment denifition that include a ReplicaSet resources
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oscar-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: oscar-deploy
+  strategy:
+    rollingUpdate:
+      maxSurge: 1 # or 25%
+      maxUnavailable: 1 # or 25%    
+  template:
+    metadata:
+      labels: 
+        app:  oscar-deploy
+    spec:
+      containers:
+        - name: oscar-pod
+          image: oscarwei168/nginx-oscar:v1
+          ports:
+          - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi" # 64M memory
+              cpu:  "250m" # 0.25 cpu core
+            limits:
+              memory: "128Mi" # 128M memory
+              cpu:  "1000m" # 1 cpu core  
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3               

@@ -13,7 +13,9 @@ spec:
       env:  dev
     matchExpressions:
       - {key: env, operator: In, values: [dev]}
-      - {key: env, operator: NotIn, values: [prod]}  
+      - {key: env, operator: NotIn, values: [prod]}
+      # - {key: env, operator: Exists, values: []}
+      # - {key: env, operator: DoesNotExist, values: []}
   template:
     metadata:
       labels:

@@ -1,0 +1,14 @@
+# Need apply oscar-deployment first
+apiVersion: v1
+kind: Service
+metadata:
+  name: oscar-deployment-service
+spec:
+  type: NodePort # or LoadBalancer
+  ports:
+  - port: 80
+    nodePort: 30390
+    protocol: TCP # or UDP, TCP by default
+    targetPort: 80
+  selector:
+    app: oscar-deploy # notice here, should mapping to deployment's template.metadata.labels value
